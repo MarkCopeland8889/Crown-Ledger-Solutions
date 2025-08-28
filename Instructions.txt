@@ -1,0 +1,212 @@
+Crown Ledger Solutions — Overview
+
+What it is
+Crown Ledger Solutions is a specialized dental bookkeeping firm founded by Mark Copeland. We focus exclusively on helping dental practices gain financial clarity through organized, accurate, and proactive bookkeeping.
+
+Core Services
+
+Monthly Bookkeeping
+
+Payroll
+
+Cleanup (catch-up bookkeeping)
+
+Tax Prep Support
+
+Tax Strategy
+
+Dental Backend (full back-office support tailored to dental offices: production-to-deposit tie-outs, overhead tracking, vendor payments, etc.)
+
+Value Proposition
+
+Save dentists time (hours every month freed from bookkeeping stress).
+
+Save dentists money (monitoring key benchmarks like supplies at 5–6% of collections, payroll under 28%, and tracking insurance cash received vs. just billed).
+
+Deliver tax-ready books and support CPAs for smoother, stress-free filings.
+
+Provide industry-specific insight into dental overhead and profitability, not just generic bookkeeping.
+
+Audience-Building Position
+Right now, Crown Ledger Solutions is not taking on new clients — instead, we’re focused on building a large base of dental professionals who follow our content.
+We regularly share:
+
+Free tips on running a leaner, more profitable practice
+
+Articles and guides that break down complex financial topics in plain language
+
+Downloadable resources (checklists, benchmarks, tax prep guides)
+
+Blog content with practical advice dentists can apply immediately
+
+Why It Matters
+
+Most dentists want to focus on patients, not QuickBooks.
+
+Poor bookkeeping creates stress, blinds spots, and even lost profits.
+
+By giving away education and tools, we establish trust and authority — so when dentists are ready for help, Crown Ledger Solutions is the obvious partner.
+
+Brand Tone
+
+Professional but approachable
+
+Value-first (education over sales)
+
+Transparent — not trying to sell to everyone, but helping the dental community at large
+
+# Crown Ledger Solutions — Website Technical Brief
+
+## Goal
+
+Audience-first site for dental bookkeeping authority. Primary CTA = **email subscribe / resource downloads**, secondary CTA = **“Join waitlist”** (not hiring now).
+
+## Tech Stack (recommended)
+
+* **Next.js 14 (App Router)** + **TypeScript**
+* **Tailwind CSS** (+ Typography plugin)
+* **MDX** for blog posts
+* **Headless CMS (optional):** Contentlayer or Sanity (if you want non-dev editing)
+* **Forms/Email:** ConvertKit or Mailchimp; Formspree/Netlify Forms for contact
+* **Deployment:** Vercel
+* **Analytics:** Plausible or GA4
+
+## Pages & Routes (11)
+
+* `/` Home
+* `/about`
+* `/services`
+* `/contact`
+* `/blog` (list)
+* `/blog/[slug]` (post)
+* Local SEO pages:
+
+  * `/dental-bookkeeping-greenville-sc`
+  * `/dental-bookkeeping-spartanburg-sc`
+  * `/dental-bookkeeping-anderson-sc`
+  * `/dental-bookkeeping-colorado-springs-co`
+  * `/dental-bookkeeping-denver-co`
+  * `/dental-bookkeeping-woodland-park-co`
+
+## Global UX
+
+* **Header:** logo, nav, “Subscribe” button, small “Join waitlist” link
+* **Footer:** NAP (city/state ok), social, Areas We Serve, email signup
+* **Palette:** match logo/header (light-blue → white gradient)
+* **Typography:** Inter or system font; large, clean headings
+
+## Components
+
+* `Hero` (headline, subhead, primary CTA = Subscribe, secondary CTA = Read the Blog)
+* `ServiceCard` x6 (Monthly Bookkeeping, Payroll, Cleanup, Tax Prep Support, Tax Strategy, Dental Backend)
+* `KPIStrip` (Supplies 5–6%, Payroll 28% alert, Insurance cash vs billed)
+* `EmailSignup` (inline + modal)
+* `ResourceCTA` (download lead magnet)
+* `Testimonial` (placeholder ready)
+* `PostList` + `PostCard` (tags, date, reading time)
+* `TagPills`
+* `CalendlyEmbed` (on /contact only)
+
+## Content Requirements (copy blocks the dev can wire)
+
+### Home (`/`)
+
+* H1: “Financial Clarity for Dental Practices”
+* Sub: “Clean books • Stress-free tax season • Profit-focused reporting”
+* CTA: **Subscribe for weekly tips** (email capture)
+* Section: “What We Do” (6 services, 1–2 lines each)
+* “Why dental-specific bookkeeping?” (revenue cycle, overhead, KPIs)
+* Secondary CTA: **Download the Dental Bookkeeping Starter Kit (PDF)**
+
+### About
+
+* Headshot + bio (Mark Copeland)
+* Mission/approach, personable paragraph
+* Soft CTA: Subscribe / Join waitlist
+
+### Services
+
+* 6 services; each: problem → outcome, 80–120 words, bullet deliverables
+* CTA: “Get the Starter Kit” + Join waitlist
+
+### Contact
+
+* **Calendly** inline embed (strategy consult — can say waitlist)
+* Simple contact form (Name, Email, Practice, Message)
+* Note you’re **not taking clients**; offer waitlist & newsletter
+
+### Blog
+
+* List view (cards). Filters by tag.
+* Post page: featured image, MDX, resource box (downloads), tag pills, inline newsletter signup
+
+### Local SEO pages (6)
+
+* Unique H1: “Dental Bookkeeping in {City, ST}”
+* 250–400 words of **unique** copy per city (no duplicates)
+* Nearby areas line, internal links to Services + Contact + other city pages
+* CTA: Subscribe + Join waitlist
+
+## Blog System
+
+* MDX frontmatter: `title`, `date`, `summary`, `tags[]`, `image`
+* `/public/blog/*` for images
+* Auto tag pages: `/tag/[tag]`
+* Resource downloads in `/public/downloads/*` with clear buttons
+
+## CTAs (audience-first)
+
+* Primary: “Join 500+ dentists getting weekly bookkeeping tips” (email)
+* Secondary: “Download the Dental Bookkeeping Starter Kit (PDF)”
+* Tertiary: “Join the waitlist” (captures name, email, city)
+
+## Integrations
+
+* **Email**: ConvertKit/Mailchimp API; double opt-in, success/ error states
+* **Calendly**: Inline widget on `/contact` + header “Book” can open popup (optional)
+* **Contact form**: Formspree/Netlify Forms; spam honeypot
+
+## SEO
+
+* Per-page meta titles/descriptions
+* **Open Graph/Twitter cards**
+* **Schema.org** JSON-LD:
+
+  * `AccountingService` (org, logo, founder, `areaServed` cities)
+  * `BlogPosting` for posts
+* **Sitemap.xml** + **robots.txt**
+* Clean, keyworded slugs (already listed)
+
+## Performance & A11y
+
+* Next/Image for responsive images (WebP/AVIF)
+* Tailwind JIT; minimal JS; lazy-load non-critical
+* Color-contrast check; alt text; keyboard nav
+
+## Config / Env
+
+* `NEXT_PUBLIC_SITE_URL`
+* `NEXT_PUBLIC_ANALYTICS_ID` (if using GA/Plausible)
+* `CONVERTKIT_API_KEY` / `MAILCHIMP_AUDIENCE_ID`
+* `FORMS_ENDPOINT` (if Formspree)
+
+## Acceptance Criteria (checklist)
+
+* [ ] All 11 routes render; mobile nav works
+* [ ] Email signup works (stored in ESP); success/fail toasts
+* [ ] Calendly loads on `/contact`
+* [ ] Blog supports tags, featured image, code/MDX
+* [ ] Each city page has **unique** copy + internal links
+* [ ] Lighthouse: 90+ Performance/SEO/Best Practices/A11y
+* [ ] Sitemap & robots served; schema validates (Rich Results test)
+* [ ] Deployed to Vercel; custom domain ready
+
+## Assets I'll provide to you (dev)
+
+* Logo (SVG/PNG), Headshot (JPG/PNG)
+* Brand blue hex code(s)
+* Initial lead magnet PDF (or placeholder)
+* 2–3 starter blog posts (MDX) + images
+
+
+

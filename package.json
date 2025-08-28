@@ -1,0 +1,38 @@
+{
+  "name": "crown-ledger-solutions",
+  "version": "1.0.0",
+  "description": "Financial clarity for dental practices - specialized dental bookkeeping services",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "dental",
+    "bookkeeping",
+    "accounting",
+    "financial",
+    "dental-practice"
+  ],
+  "author": "Mark Copeland",
+  "license": "ISC",
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.8",
+    "next": "^15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "eslint": "^9.34.0",
+    "eslint-config-next": "^15.5.2"
+  }
+}
