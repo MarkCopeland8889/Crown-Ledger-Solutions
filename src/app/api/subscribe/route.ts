@@ -6,7 +6,13 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, firstName } = await request.json()
+    const body = await request.json()
+    const { email, firstName, website } = body
+
+    // Check for honeypot field (spam protection)
+    if (website) {
+      return NextResponse.json({ success: true }, { status: 200 })
+    }
 
     // Basic validation
     if (!email || !firstName) {
@@ -14,12 +20,6 @@ export async function POST(request: NextRequest) {
         { error: 'Email and firstName are required' },
         { status: 400 }
       )
-    }
-
-    // Check for honeypot field (spam protection)
-    const body = await request.json()
-    if (body.website) {
-      return NextResponse.json({ success: true }, { status: 200 })
     }
 
     console.log('=== Starting subscription process ===')
