@@ -1,147 +1,107 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Resend } from 'resend'
 
-// Initialize Mailchimp with your API key and server prefix
-const mailchimp = require('@mailchimp/mailchimp_marketing')
-mailchimp.setConfig({
-  apiKey: process.env.MAILCHIMP_API_KEY || '',
-  server: process.env.MAILCHIMP_SERVER_PREFIX || ''
-})
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('=== Starting ConvertKit subscription process ===')
-    
-    const body = await request.json()
-    const { email, firstName = 'Dental Professional' } = body
-
-    console.log('Subscription request:', { email, firstName })
+    const { email, firstName } = await request.json()
 
     // Basic validation
-    if (!email) {
-      console.log('ERROR: Email is required')
+    if (!email || !firstName) {
       return NextResponse.json(
-        { error: 'Email is required' },
+        { error: 'Email and firstName are required' },
         { status: 400 }
       )
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      console.log('ERROR: Invalid email format:', email)
+    // Check for honeypot field (spam protection)
+    const body = await request.json()
+    if (body.website) {
+      return NextResponse.json({ success: true }, { status: 200 })
+    }
+
+    console.log('=== Starting subscription process ===')
+    console.log('Subscription request:', { email, firstName })
+
+    // Get environment variables
+    const adminEmail = process.env.ADMIN_EMAIL
+    const fromEmail = process.env.FROM_EMAIL
+
+    if (!adminEmail || !fromEmail) {
+      console.error('Missing environment variables')
       return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
+        { error: 'Server configuration error' },
+        { status: 500 }
       )
     }
 
-    // Get Mailchimp configuration
-    const apiKey = process.env.MAILCHIMP_API_KEY
-    const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX
-    const audienceId = process.env.MAILCHIMP_AUDIENCE_ID
+    console.log('Email configuration:', { adminEmail, fromEmail })
 
-    console.log('Mailchimp configuration:', {
-      apiKey: apiKey ? 'Found' : 'Missing',
-      serverPrefix,
-      audienceId
+    // Send welcome email to subscriber
+    console.log('Sending welcome email to subscriber:', email)
+    const welcomeEmail = await resend.emails.send({
+      from: fromEmail,
+      to: email,
+      subject: 'Welcome to Crown Ledger Solutions! 🦷',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0ea5e9;">Welcome to Financial Clarity, ${firstName}!</h2>
+          <p>Thank you for subscribing to our weekly dental bookkeeping insights!</p>
+          <p>You'll now receive:</p>
+          <ul>
+            <li>Weekly dental bookkeeping tips</li>
+            <li>Tax season preparation strategies</li>
+            <li>Profit optimization insights</li>
+            <li>Industry benchmarks and best practices</li>
+          </ul>
+          <p>Your first email will arrive next week with actionable insights to improve your practice's financial health.</p>
+          <p>Best regards,<br>Mark Copeland<br>Crown Ledger Solutions</p>
+        </div>
+      `
     })
 
-    if (!apiKey) {
-      console.log('ERROR: MAILCHIMP_API_KEY not found')
-      return NextResponse.json({
-        error: 'Mailchimp API key not configured',
-        envVars: { apiKey: !!apiKey, serverPrefix, audienceId }
-      })
-    }
+    console.log('Welcome email sent successfully:', welcomeEmail)
 
-    if (!serverPrefix) {
-      console.log('ERROR: MAILCHIMP_SERVER_PREFIX not found')
-      return NextResponse.json({
-        error: 'Mailchimp server prefix not configured',
-        envVars: { apiKey: !!apiKey, serverPrefix, audienceId }
-      })
-    }
-
-    if (!audienceId) {
-      console.log('ERROR: MAILCHIMP_AUDIENCE_ID not found')
-      return NextResponse.json({
-        error: 'Mailchimp audience ID not configured',
-        envVars: { apiKey: !!apiKey, serverPrefix, audienceId }
-      })
-    }
-
-    // Subscribe to Mailchimp
-    console.log('Subscribing to Mailchimp audience:', audienceId)
-    const subscription = await mailchimp.lists.addListMember(audienceId, {
-      email_address: email,
-      status: 'subscribed',
-      merge_fields: {
-        FNAME: firstName
-      }
+    // Send admin notification with subscriber details
+    console.log('Sending admin notification to:', adminEmail)
+    const adminNotification = await resend.emails.send({
+      from: fromEmail,
+      to: adminEmail,
+      subject: 'New Newsletter Subscriber - Crown Ledger Solutions',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0ea5e9;">New Newsletter Subscriber!</h2>
+          <p><strong>Name:</strong> ${firstName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+          <p>This subscriber has been added to your weekly newsletter list.</p>
+          <p><strong>Next Steps:</strong></p>
+          <ul>
+            <li>Add ${email} to your Resend contacts</li>
+            <li>Send your weekly newsletter to all subscribers</li>
+            <li>Track engagement through Resend analytics</li>
+          </ul>
+          <p><strong>Pro Tip:</strong> Use Resend's contact management to organize your subscribers and send targeted campaigns!</p>
+        </div>
+      `
     })
 
-    console.log('Mailchimp subscription result:', subscription)
+    console.log('Admin notification sent successfully:', adminNotification)
 
-    // Send admin notification using Resend (since this works)
-    const adminEmail = process.env.ADMIN_EMAIL || 'fusionspace.net@gmail.com'
-    const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev'
-    
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const { Resend } = await import('resend')
-        const resend = new Resend(process.env.RESEND_API_KEY)
-        
-        console.log('Sending admin notification to:', adminEmail)
-        const adminNotification = await resend.emails.send({
-          from: `Crown Ledger Solutions <${fromEmail}>`,
-          to: [adminEmail],
-          subject: `New Newsletter Subscriber: ${email}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #059669; border-bottom: 2px solid #059669; padding-bottom: 10px;">
-                New Newsletter Subscriber
-              </h2>
-              
-                             <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                 <h3 style="color: #374151; margin-top: 0;">Subscriber Details</h3>
-                 <p><strong>Email:</strong> ${email}</p>
-                 <p><strong>Name:</strong> ${firstName}</p>
-                 <p><strong>Subscribed:</strong> ${new Date().toLocaleString()}</p>
-                 <p><strong>Platform:</strong> Mailchimp</p>
-               </div>
-               
-               <div style="background-color: #ecfdf5; padding: 15px; border-radius: 8px; border: 1px solid #a7f3d0;">
-                 <p style="margin: 0; color: #065f46; font-size: 14px;">
-                   <strong>Next Steps:</strong> This person has been added to your Mailchimp audience and will receive your welcome sequence.
-                 </p>
-               </div>
-              
-              <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-                <p>This notification was sent from your website subscription system.</p>
-              </div>
-            </div>
-          `,
-        })
-        console.log('Admin notification sent successfully:', adminNotification)
-      } catch (adminError) {
-        console.error('ERROR sending admin notification:', adminError)
-        // Don't fail the whole subscription if admin notification fails
-      }
-    }
+    console.log('=== Subscription process completed successfully ===')
 
-    console.log('=== ConvertKit subscription process completed successfully ===')
     return NextResponse.json({ 
       success: true, 
-      message: 'Successfully subscribed to our newsletter! Check your email for your welcome gift.',
-      subscriberId: subscription.id || 'No ID returned',
-      platform: 'Mailchimp',
-      welcomeEmailSent: true
+      message: 'Successfully subscribed to newsletter',
+      subscriber: { email, firstName }
     })
 
   } catch (error) {
-    console.error('ConvertKit subscription error:', error)
+    console.error('Subscription error:', error)
     return NextResponse.json(
-      { error: 'Failed to subscribe. Please try again.' },
+      { error: 'Failed to subscribe to newsletter' },
       { status: 500 }
     )
   }
