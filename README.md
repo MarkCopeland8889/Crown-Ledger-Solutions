@@ -87,6 +87,22 @@ public/
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
+## 🚀 Deployment
+
+### Vercel Deployment (Recommended)
+This project is optimized for Vercel deployment. See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions.
+
+**Quick Deploy:**
+1. Push your code to GitHub
+2. Connect your repository to [Vercel](https://vercel.com)
+3. Add environment variables in Vercel dashboard
+4. Deploy automatically!
+
+### Other Platforms
+- **Netlify:** Compatible with Next.js
+- **Railway:** Good for full-stack apps
+- **DigitalOcean App Platform:** Enterprise option
+
 ## 🎨 Customization
 
 ### Brand Colors

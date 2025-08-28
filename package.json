@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@tailwindcss/postcss": "^4.1.12",
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^19.1.12",
@@ -27,6 +28,7 @@
     "next": "^15.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "resend": "^6.0.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.9.2"
   },
